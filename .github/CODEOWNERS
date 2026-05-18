@@ -1,0 +1,4 @@
+# Every PR auto-requests the repo owner as reviewer. Combined with branch
+# protection, this means nothing reaches main without an explicit approval.
+# Buyer: replace the placeholder below with your GitHub handle (e.g. @yourhandle).
+*       @REPO_OWNER

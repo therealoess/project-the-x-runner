@@ -1,0 +1,54 @@
+Project THE X Runner — Proprietary Software License
+
+Copyright © 2026 Project THE X. All rights reserved.
+
+This software (the "Software") — including but not limited to its source
+code, binary installers, brand marks, design, and accompanying materials
+— is the proprietary work of the copyright holder. It is made available
+to end users solely to install, run, and use the Project THE X Runner
+desktop application in connection with an authorised Project THE X
+dashboard account.
+
+NO LICENCE IS GRANTED, EXPRESSLY OR BY IMPLICATION, FOR ANY USE OTHER
+THAN INSTALLING AND RUNNING THE OFFICIAL UNMODIFIED RUNNER ON YOUR OWN
+COMPUTER FOR YOUR OWN PROJECT THE X ACCOUNT.
+
+Without the prior written permission of the copyright holder, you may
+NOT:
+
+  1. Copy, distribute, sublicense, sell, rent, lease, or otherwise
+     transfer the Software or any portion of it to any third party.
+  2. Modify, adapt, translate, port, reverse engineer, decompile,
+     disassemble, or create derivative works of the Software, except
+     to the minimum extent required by applicable law that cannot be
+     contractually waived.
+  3. Remove, alter, or obscure any copyright, trademark, or other
+     proprietary notices in the Software or its accompanying
+     materials.
+  4. Use the Software, the "Project THE X" name, the logo, or any
+     other brand element to develop, market, or distribute a competing
+     product or service.
+  5. Use the Software to provide a hosted, multi-tenant, or commercial
+     service to any third party, except as a licensed user of the
+     Project THE X platform.
+  6. Re-publish, mirror, fork, or otherwise host the source code,
+     binary installers, or any substantial portion of the Software on
+     any public or private repository, package registry, file-sharing
+     service, or distribution channel.
+
+This source repository is published publicly only so that build
+artefacts (the desktop installers) can be delivered to authorised
+users. Public visibility does NOT constitute a grant of any open-source
+licence. The source remains the sole property of the copyright holder
+and is not free or open-source software under any recognised licence
+(MIT, Apache, GPL, BSD, etc.).
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM, DAMAGES
+OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR
+OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR
+THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+For licensing enquiries, contact support@project-the-x.com.

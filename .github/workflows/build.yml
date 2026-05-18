@@ -1,0 +1,130 @@
+name: Companion desktop app — build installers
+
+# Triggers on a tag push like `runner-v1.0.0` so we don't burn CI on every
+# main push. To cut a release: `git tag runner-v1.0.0 && git push --tags`.
+# Outputs are attached to the matching GitHub Release.
+on:
+  push:
+    tags:
+      - 'runner-v*'
+  workflow_dispatch:        # also runnable manually from the Actions tab
+
+# Opt every JS action in this workflow into Node 24 ahead of GitHub's
+# 2026-06-02 forced migration. actions/checkout@v4 + actions/setup-node@v4
+# still execute on Node 20 by default; setting this env tells the runner
+# to give them Node 24 instead so the deprecation warning goes away.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
+# GITHUB_TOKEN defaults to read-only in repos created after Feb 2023.
+# softprops/action-gh-release needs `contents: write` to create the
+# release entry and attach binaries. Without this it fails with HTTP
+# 403 'Resource not accessible by integration'. We scope it to this
+# workflow so the rest of the repo's automation stays read-only.
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+    defaults:
+      run:
+        working-directory: companion-app
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: companion-app/package-lock.json
+
+      # Install BOTH dependency trees:
+      #   • companion/ — runtime deps the spawned CLI imports (ws).
+      #     electron-builder copies companion/node_modules into the
+      #     packaged .app via the extraResources entry. Without this
+      #     step the bundled CLI fails on import with ERR_MODULE_NOT_FOUND
+      #     for `ws` because there's nothing to copy.
+      #   • companion-app/ — Electron + electron-builder devDeps.
+      - name: Install companion CLI deps
+        working-directory: companion
+        run: npm install --omit=dev
+      - name: Install companion-app deps
+        run: npm ci || npm install
+
+      # Codesigning is optional. We branch at the SHELL level rather than
+      # in YAML because GHA's `if:` doesn't reliably evaluate secrets
+      # context. The bash script forwards CSC_LINK only when it's actually
+      # set; otherwise it tells electron-builder to skip identity
+      # discovery entirely. Without this branch electron-builder treats
+      # `CSC_LINK=''` as 'sign with cert at this path' and resolves the
+      # empty path to the working-directory, failing with the cryptic
+      # 'companion-app not a file' message.
+      - name: Build (mac)
+        if: matrix.os == 'macos-latest'
+        shell: bash
+        run: |
+          if [ -n "$MAC_CSC_LINK" ]; then
+            CSC_LINK="$MAC_CSC_LINK" CSC_KEY_PASSWORD="$MAC_CSC_KEY_PASSWORD" npm run build:mac
+          else
+            CSC_IDENTITY_AUTO_DISCOVERY=false npm run build:mac
+          fi
+        env:
+          MAC_CSC_LINK:         ${{ secrets.MAC_CSC_LINK }}
+          MAC_CSC_KEY_PASSWORD: ${{ secrets.MAC_CSC_KEY_PASSWORD }}
+
+      - name: Build (win)
+        if: matrix.os == 'windows-latest'
+        shell: bash
+        run: |
+          if [ -n "$WIN_CSC_LINK" ]; then
+            CSC_LINK="$WIN_CSC_LINK" CSC_KEY_PASSWORD="$WIN_CSC_KEY_PASSWORD" npm run build:win
+          else
+            npm run build:win
+          fi
+        env:
+          WIN_CSC_LINK:         ${{ secrets.WIN_CSC_LINK }}
+          WIN_CSC_KEY_PASSWORD: ${{ secrets.WIN_CSC_KEY_PASSWORD }}
+
+      - name: Build (linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: npm run build:linux
+
+      - name: Upload artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: runner-${{ matrix.os }}
+          path: |
+            companion-app/dist/*.dmg
+            companion-app/dist/*.zip
+            companion-app/dist/*.exe
+            companion-app/dist/*.AppImage
+            companion-app/dist/*.deb
+            companion-app/dist/*.yml
+            companion-app/dist/*.blockmap
+
+      # The *.yml + *.blockmap files are mandatory companions for
+      # electron-updater: latest-mac.yml / latest.yml / latest-linux.yml
+      # publish the version + the URL of the matching artefact + a SHA512
+      # checksum, and the blockmaps let the updater do delta downloads.
+      # Without them auto-update silently no-ops on every launch.
+      - name: Publish to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/runner-v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            companion-app/dist/*.dmg
+            companion-app/dist/*.zip
+            companion-app/dist/*.exe
+            companion-app/dist/*.AppImage
+            companion-app/dist/*.deb
+            companion-app/dist/*.yml
+            companion-app/dist/*.blockmap
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

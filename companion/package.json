@@ -1,0 +1,19 @@
+{
+  "name": "project-the-x-companion",
+  "version": "1.3.2",
+  "description": "Local AI runner for the Project THE X dashboard. Runs Claude Code subprocesses on your machine using your own Claude subscription.",
+  "type": "module",
+  "main": "companion.js",
+  "bin": {
+    "project-the-x-companion": "./bin/companion.js"
+  },
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "start": "node companion.js"
+  },
+  "keywords": ["claude", "claude-code", "ai", "companion", "byoc"],
+  "license": "SEE LICENSE IN LICENSE",
+  "dependencies": {
+    "ws": "^8.18.0"
+  }
+}

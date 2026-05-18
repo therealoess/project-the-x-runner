@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self';">
+<title>Project THE X Runner</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"><span class="x"></span><span class="dot"></span></span>
+    <div class="brand-text">
+      <strong>Project THE X</strong>
+      <span class="brand-sub">AI Runner</span>
+    </div>
+  </div>
+  <span class="version" id="version">—</span>
+</header>
+
+<main class="card-host">
+
+  <!-- STATE A · Unpaired ============================================ -->
+  <section class="card" id="state-unpaired" hidden>
+    <h1 class="card-title">Pair this runner with your dashboard</h1>
+    <p class="card-sub">Sign in to your dashboard, open <strong>Settings → AI Runner</strong>, generate a pairing code, and paste it below. The runner will stay running quietly in the background after that.</p>
+
+    <label class="field">
+      <span class="lbl">Dashboard URL</span>
+      <input id="pair-url" type="text" inputmode="url" autocomplete="off" placeholder="https://project-the-x.com" value="https://project-the-x.com">
+    </label>
+    <label class="field">
+      <span class="lbl">Pairing code</span>
+      <input id="pair-code" type="text" autocomplete="off" spellcheck="false" placeholder="paste it here…">
+    </label>
+
+    <div class="row">
+      <button class="btn-primary" id="pair-btn">Connect →</button>
+      <a class="btn-ghost" id="open-dashboard" href="#">Open dashboard</a>
+    </div>
+    <p class="muted" id="pair-error" hidden></p>
+  </section>
+
+  <!-- STATE B · Connecting / Pairing ================================ -->
+  <section class="card" id="state-pairing" hidden>
+    <div class="spinner" aria-hidden="true"></div>
+    <h1 class="card-title">Connecting…</h1>
+    <p class="card-sub" id="pairing-message">Talking to your dashboard.</p>
+  </section>
+
+  <!-- STATE C · Connected =========================================== -->
+  <section class="card" id="state-connected" hidden>
+    <p class="pill" id="status-pill"><span class="pill-dot"></span><span id="status-text">Connected</span></p>
+    <h1 class="card-title">Your runner is online.</h1>
+    <p class="card-sub">The dashboard will route AI work through this app — your own Claude subscription pays. You can close this window; the runner stays active in the system tray.</p>
+
+    <dl class="kv">
+      <dt>Paired with</dt><dd id="kv-dashboard">—</dd>
+      <dt>Signed in as</dt><dd id="kv-user">—</dd>
+      <dt>Paired on</dt><dd id="kv-paired-at">—</dd>
+      <dt>Jobs this session</dt><dd id="kv-jobs">0</dd>
+      <dt>Last activity</dt><dd id="kv-last">—</dd>
+    </dl>
+
+    <label class="toggle">
+      <input type="checkbox" id="open-at-login">
+      <span>Open at login (run quietly in the background)</span>
+    </label>
+
+    <div class="row">
+      <button class="btn-ghost" id="hide-btn">Hide window</button>
+      <button class="btn-ghost" id="restart-btn">Restart</button>
+      <button class="btn-danger" id="unpair-btn">Unpair…</button>
+    </div>
+  </section>
+
+  <!-- STATE D · Disconnected ======================================== -->
+  <section class="card" id="state-offline" hidden>
+    <p class="pill warn"><span class="pill-dot"></span><span>Reconnecting</span></p>
+    <h1 class="card-title">Lost connection to the dashboard.</h1>
+    <p class="card-sub" id="offline-message">The runner is paired but can't reach the dashboard right now. It will keep retrying automatically.</p>
+    <div class="row">
+      <button class="btn-ghost" id="reconnect-btn">Reconnect now</button>
+      <button class="btn-danger" id="unpair-btn-2">Unpair…</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="logbar" id="logbar">
+  <div class="log-bar-row">
+    <button class="log-toggle" id="log-toggle">Show activity log</button>
+    <button class="log-copy"   id="log-copy"   hidden type="button">Copy logs</button>
+    <button class="log-clear"  id="log-clear"  hidden type="button">Clear</button>
+    <span class="log-copied"   id="log-copied" hidden>Copied ✓</span>
+  </div>
+  <pre class="log-feed" id="log-feed" hidden></pre>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>
